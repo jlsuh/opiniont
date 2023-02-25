@@ -21,12 +21,11 @@ public class NoOpinion {
         this.wait = wait;
     }
 
-    private void signIn(final String username, final String password) {
-        WebElement usernameInput = this.wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("usuario")));
-        WebElement passwordInput = this.wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("password")));
-        usernameInput.sendKeys(username);
-        passwordInput.sendKeys(password);
-        passwordInput.submit();
+    private boolean hasPendingSurvey() {
+        return !this.wait
+                .until(ExpectedConditions.visibilityOfElementLocated(By.id("columna_1")))
+                .findElement(By.className("alert"))
+                .isDisplayed();
     }
 
     public String pendingSurveysViewURL() {
@@ -34,6 +33,12 @@ public class NoOpinion {
                 .until(ExpectedConditions.presenceOfElementLocated(By.id("encuestas_kolla")))
                 .findElement(By.tagName(this.ANCHOR))
                 .getAttribute(this.HREF);
+    }
+
+    private String iFrameFocusedURL() {
+        return this.wait
+                .until(ExpectedConditions.visibilityOfElementLocated(By.id("ifkolla")))
+                .getAttribute("src");
     }
 
     public List<String> surveysURL() {
@@ -45,10 +50,12 @@ public class NoOpinion {
                 .toList();
     }
 
-    private String iFrameFocusedURL() {
-        return this.wait
-                .until(ExpectedConditions.visibilityOfElementLocated(By.id("ifkolla")))
-                .getAttribute("src");
+    private void signIn(final String username, final String password) {
+        WebElement usernameInput = this.wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("usuario")));
+        WebElement passwordInput = this.wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("password")));
+        usernameInput.sendKeys(username);
+        passwordInput.sendKeys(password);
+        passwordInput.submit();
     }
 
     private void consentNoOpinion() {
@@ -76,9 +83,8 @@ public class NoOpinion {
         this.signIn(username, password);
         final String pendingSurveysViewURL = this.pendingSurveysViewURL();
         this.driver.get(pendingSurveysViewURL);
-        this.wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("encuesta")));
-        List<String> surveysURL = this.surveysURL();
-        if (!surveysURL.isEmpty()) {
+        if (this.hasPendingSurvey()) {
+            List<String> surveysURL = this.surveysURL();
             surveysURL.forEach(url -> {
                 this.driver.get(url);
                 this.driver.get(this.iFrameFocusedURL());
