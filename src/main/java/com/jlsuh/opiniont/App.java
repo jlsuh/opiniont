@@ -9,6 +9,17 @@ import java.time.Duration;
 public class App {
 
     public static void main(String[] args) {
+        if (args.length != 2) {
+            System.out.println(
+                    "Usage: mvn clean install " +
+                            "&& " +
+                            "mvn exec:java " +
+                            "-Dexec.mainClass=com.jlsuh.opiniont.App " +
+                            "-Dexec.cleanupDaemonThreads=false " +
+                            "-Dexec.args=\"arg1 arg2\""
+            );
+            System.exit(-1);
+        }
         WebDriver driver = new ChromeDriver();
         new NoOpinion(
                 driver,
