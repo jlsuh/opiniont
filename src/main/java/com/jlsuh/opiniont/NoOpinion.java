@@ -28,7 +28,7 @@ public class NoOpinion {
                 .isDisplayed();
     }
 
-    public String pendingSurveysViewURL() {
+    private String pendingSurveysViewURL() {
         return this.wait
                 .until(ExpectedConditions.presenceOfElementLocated(By.id("encuestas_kolla")))
                 .findElement(By.tagName(this.ANCHOR))
@@ -41,7 +41,7 @@ public class NoOpinion {
                 .getAttribute("src");
     }
 
-    public List<String> surveysURL() {
+    private List<String> surveysURL() {
         return this.wait
                 .until(ExpectedConditions.presenceOfElementLocated(By.id("listado_encuestas")))
                 .findElements(By.tagName(this.ANCHOR))
