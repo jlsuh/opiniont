@@ -1,9 +1,6 @@
 package com.jlsuh.opiniont;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -19,13 +16,6 @@ public class NoOpinion {
     public NoOpinion(WebDriver driver, WebDriverWait wait) {
         this.driver = driver;
         this.wait = wait;
-    }
-
-    private boolean hasPendingSurvey() {
-        return !this.wait
-                .until(ExpectedConditions.visibilityOfElementLocated(By.id("columna_1")))
-                .findElement(By.className("alert"))
-                .isDisplayed();
     }
 
     private String pendingSurveysViewURL() {
@@ -83,9 +73,8 @@ public class NoOpinion {
         this.signIn(username, password);
         final String pendingSurveysViewURL = this.pendingSurveysViewURL();
         this.driver.get(pendingSurveysViewURL);
-        if (this.hasPendingSurvey()) {
-            List<String> surveysURL = this.surveysURL();
-            surveysURL.forEach(url -> {
+        try {
+            this.surveysURL().forEach(url -> {
                 this.driver.get(url);
                 this.driver.get(this.iFrameFocusedURL());
                 this.consentNoOpinion();
@@ -94,7 +83,9 @@ public class NoOpinion {
                 this.driver.get(pendingSurveysViewURL);
             });
             System.out.println("Encuestas respondidas");
-        } else System.out.println("No hay encuestas pendientes");
+        } catch (TimeoutException e) {
+            System.out.println("No hay encuestas pendientes");
+        }
         this.driver.quit();
     }
 
