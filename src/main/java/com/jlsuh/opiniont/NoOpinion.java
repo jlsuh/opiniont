@@ -32,12 +32,16 @@ public class NoOpinion {
     }
 
     private List<String> surveysURL() {
-        return this.wait
-                .until(ExpectedConditions.presenceOfElementLocated(By.id("listado_encuestas")))
-                .findElements(By.tagName(this.ANCHOR))
-                .stream()
-                .map(survey -> survey.getAttribute(this.HREF))
-                .toList();
+        try {
+            return this.wait
+                    .until(ExpectedConditions.presenceOfElementLocated(By.id("listado_encuestas")))
+                    .findElements(By.tagName(this.ANCHOR))
+                    .stream()
+                    .map(survey -> survey.getAttribute(this.HREF))
+                    .toList();
+        } catch (TimeoutException e) {
+            throw new NoPendingSurveysException("No hay encuestas pendientes");
+        }
     }
 
     private void signIn(final String username, final String password) {
@@ -83,8 +87,8 @@ public class NoOpinion {
                 this.driver.get(pendingSurveysViewURL);
             });
             System.out.println("Encuestas respondidas");
-        } catch (TimeoutException e) {
-            System.out.println("No hay encuestas pendientes");
+        } catch (NoPendingSurveysException e) {
+            System.out.println(e.getMessage());
         }
         this.driver.quit();
     }
