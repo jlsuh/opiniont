@@ -17,8 +17,3 @@ $ mvn clean install && mvn exec:java -Dexec.mainClass=com.jlsuh.opiniont.App -De
 ```
 
 O bien mediante IntelliJ, configurando ambos argumentos en "Select Run/Debug Configuration" > "Edit Configurations..."
-
-## ToDo
-
-- [ ] Deshacer de la vista de "Encuestas Pendientes" las encuestas ya respondidas.
-- [ ] Quizás dockerizar.
